@@ -1,9 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using KawaiiKiller.Core;
-using KawaiiKiller.Cinematics;
 using KawaiiKiller.Player;
-using KawaiiKiller.Weapons;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,13 +14,10 @@ public class GameManager : MonoBehaviour
     public bool     IsStoryMode   => CurrentMode == GameMode.Story;
     public bool     IsEndlessMode => CurrentMode == GameMode.Endless;
 
-    [Header("Navigation")]
+    [Header("Scenes")]
     [SerializeField] private string mainMenuScene = "MenuScene";
     [SerializeField] private string shopScene     = "Shop";
     [SerializeField] private string gameScene     = "Game";
-
-    [Header("Comic")]
-    [SerializeField] private ComicManager comicManager;
 
     private void Awake()
     {
@@ -35,34 +30,13 @@ public class GameManager : MonoBehaviour
     {
         CurrentMode = mode;
         SaveSystem.Instance?.ClearSave();
-
-        if (IsStoryMode && comicManager != null)
-        {
-            SceneLoader.Instance.LoadScene(gameScene, () =>
-            {
-                comicManager.Play(OnIntroComplete);
-            });
-        }
-        else
-        {
-            SceneLoader.Instance.LoadScene(gameScene, () =>
-            {
-                WaveManager.Instance.StartRound(1);
-            });
-        }
-    }
-
-    private void OnIntroComplete()
-    {
-        if (WaveManager.Instance != null)
-            WaveManager.Instance.StartRound(1);
+        SceneLoader.Instance.LoadScene(gameScene, null);
     }
 
     public void ContinueGame()
     {
         var save = SaveSystem.Instance?.Load();
         if (save == null) return;
-
         CurrentMode = save.gameMode;
         PersistentPlayer.Instance?.CaptureStateFromSave(save);
         SceneLoader.Instance.LoadScene(shopScene);
@@ -70,35 +44,13 @@ public class GameManager : MonoBehaviour
 
     public void RestartCurrentMode()
     {
-        SceneLoader.Instance.LoadScene(gameScene, () =>
-        {
-            WaveManager.Instance?.StartRound(1);
-        });
+        SceneLoader.Instance.LoadScene(gameScene, null);
     }
 
     public void GoToNextRound()
     {
-        if (IsStoryMode && comicManager != null && WaveManager.Instance != null)
-        {
-            int next = WaveManager.Instance.CurrentRound + 1;
-            SceneLoader.Instance.LoadScene(gameScene, () =>
-            {
-                comicManager.PlayRound(next, OnRoundComplete);
-            });
-        }
-        else
-        {
-            SceneLoader.Instance.LoadScene(gameScene, () =>
-            {
-                WaveManager.Instance?.StartRound(WaveManager.Instance.CurrentRound + 1);
-            });
-        }
-    }
-
-    private void OnRoundComplete()
-    {
-        if (WaveManager.Instance != null)
-            WaveManager.Instance.StartRound(WaveManager.Instance.CurrentRound + 1);
+        if (GameLoopOrchestrator.Instance != null)
+            GameLoopOrchestrator.Instance.NextRound();
     }
 
     public void ConvertToEndless() => CurrentMode = GameMode.Endless;

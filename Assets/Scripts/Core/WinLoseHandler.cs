@@ -1,45 +1,58 @@
 using UnityEngine;
-using KawaiiKiller.Cinematics;
 using KawaiiKiller.UI;
 
-public class WinLoseHandler : MonoBehaviour
+namespace KawaiiKiller.Core
 {
-    [SerializeField] private GameOverScreen gameOverScreen;
-    [SerializeField] private RoundScorePanel scorePanel;
-
-    private void OnEnable()
+    public class WinLoseHandler : MonoBehaviour
     {
-        if (WaveManager.Instance != null)
-            WaveManager.Instance.OnRoundEnded += HandleRoundEnd;
-    }
+        [SerializeField] private GameOverScreen gameOverScreen;
+        [SerializeField] private RoundScorePanel scorePanel;
 
-    private void OnDisable()
-    {
-        if (WaveManager.Instance != null)
-            WaveManager.Instance.OnRoundEnded -= HandleRoundEnd;
-    }
-
-    public void HandlePlayerDeath()
-    {
-        Time.timeScale = 0f;
-        gameOverScreen?.Show();
-    }
-
-    private void HandleRoundEnd(int completedRound)
-    {
-        if (scorePanel != null && WaveManager.Instance != null)
+        private void OnEnable()
         {
-            scorePanel.Show(
-                WaveManager.Instance.KillsByType,
-                WaveManager.Instance.TotalRewardThisRound,
-                completedRound,
-                () => { scorePanel.gameObject.SetActive(false); RoundTransitionManager.Instance?.BeginTransition(completedRound); },
-                () => { scorePanel.gameObject.SetActive(false); GameManager.Instance?.GoToMainMenu(); }
-            );
+            if (WaveManager.Instance != null)
+                WaveManager.Instance.OnRoundEnded += HandleRoundEnd;
         }
-        else
+
+        private void OnDisable()
         {
-            RoundTransitionManager.Instance?.BeginTransition(completedRound);
+            if (WaveManager.Instance != null)
+                WaveManager.Instance.OnRoundEnded -= HandleRoundEnd;
+        }
+
+        public void HandlePlayerDeath()
+        {
+            Time.timeScale = 0f;
+            gameOverScreen?.Show();
+        }
+
+        private void HandleRoundEnd(int completedRound)
+        {
+            if (scorePanel != null && WaveManager.Instance != null)
+            {
+                scorePanel.Show(
+                    WaveManager.Instance.KillsByType,
+                    WaveManager.Instance.TotalRewardThisRound,
+                    completedRound,
+                    OnContinueFromScore,
+                    () => { scorePanel.gameObject.SetActive(false); GameManager.Instance?.GoToMainMenu(); }
+                );
+            }
+            else
+            {
+                OnContinueFromScore();
+            }
+        }
+
+        private void OnContinueFromScore()
+        {
+            scorePanel?.gameObject.SetActive(false);
+
+            if (GameLoopOrchestrator.Instance != null)
+            {
+                GameLoopOrchestrator.Instance.CompleteRound();
+                GameLoopOrchestrator.Instance.GoToShop();
+            }
         }
     }
 }

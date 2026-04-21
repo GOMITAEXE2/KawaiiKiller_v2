@@ -47,12 +47,20 @@ namespace KawaiiKiller.UI.Menu
 
             gameObject.SetActive(true);
             panelRect.localScale = Vector3.zero;
-            canvasGroup.alpha    = 0f;
+            canvasGroup.alpha = 0f;
 
             _seq?.Kill();
             _seq = DOTween.Sequence().SetUpdate(true);
             _seq.Join(panelRect.DOScale(Vector3.one, popDuration).SetEase(Ease.OutBack));
             _seq.Join(canvasGroup.DOFade(1f, popDuration));
+            _seq.OnComplete(() =>
+            {
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+            });
+
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
         }
 
         public void Hide()

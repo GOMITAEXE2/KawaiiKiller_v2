@@ -44,7 +44,7 @@ namespace KawaiiKiller.Cinematics
                 canvasGroup.alpha = 1f;
         }
 
-        public void FadeIn(float duration)
+        public Tween FadeIn(float duration)
         {
             currentTween?.Kill();
 
@@ -52,7 +52,9 @@ namespace KawaiiKiller.Cinematics
             {
                 currentTween = canvasGroup.DOFade(1f, duration)
                     .SetUpdate(true);
+                return currentTween;
             }
+            return null;
         }
 
         public void CompleteFadeIn()
@@ -64,7 +66,7 @@ namespace KawaiiKiller.Cinematics
                 canvasGroup.alpha = 1f;
         }
 
-        public void FadeOut(float duration)
+        public Tween FadeOut(float duration)
         {
             currentTween?.Kill();
 
@@ -72,7 +74,9 @@ namespace KawaiiKiller.Cinematics
             {
                 currentTween = canvasGroup.DOFade(0f, duration)
                     .SetUpdate(true);
+                return currentTween;
             }
+            return null;
         }
     }
 }

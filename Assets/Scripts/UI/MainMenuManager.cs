@@ -122,7 +122,6 @@ namespace KawaiiKiller.UI.Menu
         {
             modeSelectPanel?.Hide();
             cameraRig?.GoToSection(mainSectionIndex);
-            HidePanel(_activePanel);
             ShowPanel(mainPanel);
         }
 
@@ -139,6 +138,7 @@ namespace KawaiiKiller.UI.Menu
         private void OnModeSelected(GameManager.GameMode mode)
         {
             modeSelectPanel?.Hide();
+            _activePanel = mainPanel;
             SaveSystem.Instance?.ClearSave();
             GameManager.Instance?.StartNewGame(mode);
         }

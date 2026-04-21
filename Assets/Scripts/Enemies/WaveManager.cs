@@ -34,6 +34,13 @@ public class WaveManager : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+
+        // Ensure the object is a root object before calling DontDestroyOnLoad
+        if (transform.parent != null)
+        {
+            transform.SetParent(null);
+        }
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -46,7 +53,17 @@ public class WaveManager : MonoBehaviour
         TotalRewardThisRound = 0;
         _killsByType.Clear();
 
+        Debug.Log($"[WaveManager] StartRound: {roundNumber}, total enemies: {TotalThisRound}");
+        Debug.Log($"[WaveManager] EnemySpawner.Instance: {EnemySpawner.Instance?.name ?? "NULL"}");
+
         OnRoundStarted?.Invoke(CurrentRound);
+
+        if (EnemySpawner.Instance == null)
+        {
+            Debug.LogError("[WaveManager] EnemySpawner.Instance is NULL!");
+            return;
+        }
+
         EnemySpawner.Instance.BeginSpawning(TotalThisRound, CurrentRound);
     }
 

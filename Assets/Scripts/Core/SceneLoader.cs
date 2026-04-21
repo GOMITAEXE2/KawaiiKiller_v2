@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using KawaiiKiller.Core;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -31,5 +32,8 @@ public class SceneLoader : MonoBehaviour
         yield return op;
 
         onLoaded?.Invoke();
+
+        if (GameLoopOrchestrator.Instance != null)
+            GameLoopOrchestrator.Instance.Reinitialize();
     }
 }

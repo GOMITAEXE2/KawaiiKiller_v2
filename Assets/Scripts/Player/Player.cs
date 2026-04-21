@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using KawaiiKiller.Cinematics;
 
 namespace KawaiiKiller.Player
 {
@@ -44,7 +45,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (_inputActions == null || playerCharacter == null || playerCamera == null) return;
-        if (_inputLocked) return;
+        if (_inputLocked || ComicManager.IsPlaying)
+        {
+            Debug.Log($"[Player] Input blocked: _inputLocked={_inputLocked}, ComicManager.IsPlaying={ComicManager.IsPlaying}");
+            return;
+        }
         var input = _inputActions.Gameplay;
         var deltaTime = Time.deltaTime;
 
@@ -116,6 +121,12 @@ public class Player : MonoBehaviour
             Cursor.visible   = false;
             _inputActions?.Gameplay.Enable();
         }
+    }
+
+    public void SetInputEnabled(bool enabled)
+    {
+        Debug.Log($"[Player] SetInputEnabled({enabled}), previous: {_inputLocked}");
+        _inputLocked = !enabled;
     }
 
     public void Teleport(Vector3 position)

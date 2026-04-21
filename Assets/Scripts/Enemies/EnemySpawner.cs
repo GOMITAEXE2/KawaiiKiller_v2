@@ -19,17 +19,42 @@ public class EnemySpawner : MonoBehaviour
 
     private int remainingToSpawn;
     private int currentRound;
+    private bool _spawningEnabled;
 
     private void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        _spawningEnabled = true;
     }
+
+    public void SetSpawningEnabled(bool enabled) => _spawningEnabled = enabled;
 
     public void BeginSpawning(int total, int round)
     {
+        if (!_spawningEnabled)
+        {
+            Debug.Log("[EnemySpawner] Spawning is disabled, ignoring BeginSpawning.");
+            return;
+        }
+
         remainingToSpawn = total;
         currentRound     = round;
+
+        Debug.Log($"[EnemySpawner] BeginSpawning: total={total}, round={round}");
+
+        if (enemyEntries == null || enemyEntries.Count == 0)
+        {
+            Debug.LogError("[EnemySpawner] No enemy entries configured!");
+            return;
+        }
+
+        if (spawnPoints == null || spawnPoints.Length == 0)
+        {
+            Debug.LogError("[EnemySpawner] No spawn points configured!");
+            return;
+        }
+
         StartCoroutine(InitialFillRoutine());
     }
 
@@ -59,14 +84,46 @@ public class EnemySpawner : MonoBehaviour
 
     private void TrySpawnOne()
     {
-        if (remainingToSpawn <= 0) return;
-        if (enemyEntries == null || enemyEntries.Count == 0) return;
-        if (spawnPoints == null || spawnPoints.Length == 0) return;
+        if (remainingToSpawn <= 0)
+        {
+            Debug.Log($"[EnemySpawner] TrySpawnOne: no more to spawn (remaining={remainingToSpawn})");
+            return;
+        }
+
+        if (enemyEntries == null || enemyEntries.Count == 0)
+        {
+            Debug.LogError("[EnemySpawner] TrySpawnOne: enemyEntries empty!");
+            return;
+        }
+
+        if (spawnPoints == null || spawnPoints.Length == 0)
+        {
+            Debug.LogError("[EnemySpawner] TrySpawnOne: spawnPoints empty!");
+            return;
+        }
 
         SpawnPoint point = GetWeightedSpawnPoint();
         EnemyPoolEntry entry = GetEnemyEntry();
 
-        if (point == null || entry == null || entry.prefab == null) return;
+        if (point == null)
+        {
+            Debug.LogError("[EnemySpawner] TrySpawnOne: GetWeightedSpawnPoint returned null!");
+            return;
+        }
+
+        if (entry == null)
+        {
+            Debug.LogError("[EnemySpawner] TrySpawnOne: GetEnemyEntry returned null!");
+            return;
+        }
+
+        if (entry.prefab == null)
+        {
+            Debug.LogError($"[EnemySpawner] TrySpawnOne: entry prefab is null for {entry.enemyName}!");
+            return;
+        }
+
+        Debug.Log($"[EnemySpawner] Spawning {entry.enemyName} at {point.name}");
 
         SetLastSpawnedEntry(entry);
 
