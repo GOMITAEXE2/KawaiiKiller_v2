@@ -6,13 +6,6 @@ public class WinLoseHandler : MonoBehaviour
 {
     [SerializeField] private GameOverScreen gameOverScreen;
     [SerializeField] private RoundScorePanel scorePanel;
-    [SerializeField] private CinematicManager cinematicManager;
-
-    private void Start()
-    {
-        if (RoundTransitionManager.Instance != null && cinematicManager != null)
-            RoundTransitionManager.Instance.SetCinematicManager(cinematicManager);
-    }
 
     private void OnEnable()
     {

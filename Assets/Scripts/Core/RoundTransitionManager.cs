@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using KawaiiKiller.Cinematics;
 
 public class RoundTransitionManager : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class RoundTransitionManager : MonoBehaviour
 
     [SerializeField] private float delayBeforeTransition = 1.5f;
 
-    private CinematicManager cinematicManager;
+    private ComicManager comicManager;
 
     private void Awake()
     {
@@ -15,9 +16,9 @@ public class RoundTransitionManager : MonoBehaviour
         Instance = this;
     }
 
-    public void SetCinematicManager(CinematicManager manager)
+    public void SetComicManager(ComicManager manager)
     {
-        cinematicManager = manager;
+        comicManager = manager;
     }
 
     public void BeginTransition(int completedRound)
@@ -35,26 +36,26 @@ public class RoundTransitionManager : MonoBehaviour
             yield break;
         }
 
-        if (GameManager.Instance.IsStoryMode && cinematicManager != null)
+        if (GameManager.Instance.IsStoryMode)
         {
-            bool hasCinematic = cinematicManager.HasCinematicForRound(completedRound + 1);
-
-            if (hasCinematic)
+            SceneLoader.Instance.LoadScene("Game", () =>
             {
-                SceneLoader.Instance.LoadScene("Game", () =>
+                var found = Object.FindObjectOfType<ComicManager>();
+                if (found != null)
                 {
-                    var newCinematic = Object.FindObjectOfType<CinematicManager>();
-                    if (newCinematic != null)
+                    found.PlayRound(completedRound + 1, () =>
                     {
-                        newCinematic.PlayRoundCinematic(completedRound + 1, () =>
-                        {
-                            if (WaveManager.Instance != null)
-                                WaveManager.Instance.StartRound(completedRound + 1);
-                        });
-                    }
-                });
-                yield break;
-            }
+                        if (WaveManager.Instance != null)
+                            WaveManager.Instance.StartRound(completedRound + 1);
+                    });
+                }
+                else
+                {
+                    if (WaveManager.Instance != null)
+                        WaveManager.Instance.StartRound(completedRound + 1);
+                }
+            });
+            yield break;
         }
 
         SceneLoader.Instance.LoadShop();

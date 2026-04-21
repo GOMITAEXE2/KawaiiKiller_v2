@@ -16,13 +16,13 @@ public class GameManager : MonoBehaviour
     public bool     IsStoryMode   => CurrentMode == GameMode.Story;
     public bool     IsEndlessMode => CurrentMode == GameMode.Endless;
 
-    [Header("Scene Names")]
+    [Header("Navigation")]
     [SerializeField] private string mainMenuScene = "MenuScene";
     [SerializeField] private string shopScene     = "Shop";
     [SerializeField] private string gameScene     = "Game";
 
-    [Header("Cinematics")]
-    [SerializeField] private CinematicManager cinematicManager;
+    [Header("Comic")]
+    [SerializeField] private ComicManager comicManager;
 
     private void Awake()
     {
@@ -36,11 +36,11 @@ public class GameManager : MonoBehaviour
         CurrentMode = mode;
         SaveSystem.Instance?.ClearSave();
 
-        if (IsStoryMode && cinematicManager != null)
+        if (IsStoryMode && comicManager != null)
         {
             SceneLoader.Instance.LoadScene(gameScene, () =>
             {
-                cinematicManager.PlayIntroCinematic(OnIntroCinematicComplete);
+                comicManager.Play(OnIntroComplete);
             });
         }
         else
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnIntroCinematicComplete()
+    private void OnIntroComplete()
     {
         if (WaveManager.Instance != null)
             WaveManager.Instance.StartRound(1);
@@ -64,9 +64,7 @@ public class GameManager : MonoBehaviour
         if (save == null) return;
 
         CurrentMode = save.gameMode;
-
         PersistentPlayer.Instance?.CaptureStateFromSave(save);
-
         SceneLoader.Instance.LoadScene(shopScene);
     }
 
@@ -80,12 +78,12 @@ public class GameManager : MonoBehaviour
 
     public void GoToNextRound()
     {
-        if (IsStoryMode && cinematicManager != null && WaveManager.Instance != null)
+        if (IsStoryMode && comicManager != null && WaveManager.Instance != null)
         {
-            int nextRound = WaveManager.Instance.CurrentRound + 1;
+            int next = WaveManager.Instance.CurrentRound + 1;
             SceneLoader.Instance.LoadScene(gameScene, () =>
             {
-                cinematicManager.PlayRoundCinematic(nextRound - 1, OnRoundCinematicComplete);
+                comicManager.PlayRound(next, OnRoundComplete);
             });
         }
         else
@@ -97,19 +95,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void OnRoundCinematicComplete()
+    private void OnRoundComplete()
     {
         if (WaveManager.Instance != null)
             WaveManager.Instance.StartRound(WaveManager.Instance.CurrentRound + 1);
     }
 
-    public void ConvertToEndless()
-    {
-        CurrentMode = GameMode.Endless;
-    }
+    public void ConvertToEndless() => CurrentMode = GameMode.Endless;
 
-    public void GoToMainMenu()
-    {
-        SceneLoader.Instance.LoadScene(mainMenuScene);
-    }
+    public void GoToMainMenu() => SceneLoader.Instance.LoadScene(mainMenuScene);
 }
