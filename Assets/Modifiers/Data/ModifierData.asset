@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9cbcf45c2b604c54fb4cc3b8d8a07548, type: 3}
+  m_Name: ModifierData
+  m_EditorClassIdentifier: 
+  ID: 01
+  Nombre: Mejora_!
+  Icono: {fileID: 21300000, guid: fce96824e7f70d64b90b3d2427c708c2, type: 3}
+  TipoDeSlot: 0
+  Precio: 20
+  Efectos:
+  - {fileID: 11400000, guid: 766febca32f6e9f4092884e01398a414, type: 2}
+  - {fileID: 11400000, guid: 2c89a0944ebedd444b1a650656d059df, type: 2}
+  - {fileID: 11400000, guid: 08f976b22f3055149b6a6b5603a6a2c6, type: 2}
+  - {fileID: 11400000, guid: 0d8cca6fe0b04c647bc557bf1b2c1b39, type: 2}

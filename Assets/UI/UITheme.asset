@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d839b550d929e8459fcecb6fed2172a, type: 3}
+  m_Name: UITheme
+  m_EditorClassIdentifier: 
+  PrimaryBackground: {r: 0.051, g: 0.039, b: 0.078, a: 1}
+  SecondaryBackground: {r: 0.102, g: 0.071, b: 0.157, a: 1}
+  PrimaryInteractable: {r: 1, g: 0.122, b: 0.431, a: 1}
+  HoverInteractable: {r: 1, g: 0.435, b: 0.659, a: 1}
+  ClickInteractable: {r: 0.769, g: 0, b: 0.31, a: 1}
+  OutlineWeapon: {r: 0.42, g: 0.373, b: 1, a: 1}
+  OutlineModifier: {r: 0, g: 0.91, b: 0.588, a: 1}
+  RaritySimple: {r: 0.361, g: 0.353, b: 0.333, a: 1}
+  RarityRara: {r: 0.42, g: 0.373, b: 1, a: 1}
+  "RarityExtra\xF1\u0430": {r: 1, g: 0.122, b: 0.431, a: 1}
+  RarityLegendaria: {r: 1, g: 0.816, b: 0, a: 1}
+  TextMain: {r: 1, g: 0.722, b: 0.824, a: 1}
+  TextSecondary: {r: 0.361, g: 0.353, b: 0.333, a: 1}
+  ColorConfirm: {r: 0.224, g: 1, b: 0.078, a: 1}
+  ColorCancel: {r: 1, g: 0.122, b: 0.431, a: 1}
+  MainFont: {fileID: 11400000, guid: 8a89fa14b10d46a99122fd4f73fca9a2, type: 2}

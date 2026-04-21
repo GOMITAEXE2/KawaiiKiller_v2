@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67ee72a83923e4418b9067958d530c5, type: 3}
+  m_Name: Rifle_0_Rifle locochon
+  m_EditorClassIdentifier: 
+  ID: Rifle_0
+  Nombre: Rifle locochon
+  Precio: 100
+  Rareza: 0
+  Prefab3D: {fileID: 1403495534730403744, guid: be76e398f84f9864bbdb197a58e745da,
+    type: 3}
+  ProjectilePrefab: {fileID: 8714075147965725877, guid: 9b4a092f4421404468c75e33e53de105,
+    type: 3}
+  Icono: {fileID: 21300000, guid: ff723d2f06a994b41adfd6ad7ed0b513, type: 3}
+  WeaponStats:
+    BaseDamage: 50
+    FireRate: 1
+    CriticalChance: 20
+    ProjectilesPerShot: 1
+    IsAutomatic: 0
+    BaseSpreadAngle: 47
+    AimingSpreadAngle: 0
+    MagazineSize: 10
+    ReloadTime: 4
+  Tipos: 08000000
+  MaxUpgrades: 5
+  MaxAttachments: 1
+  StartingModifiers:
+  - {fileID: 11400000, guid: c961ad9aedbdd8d44b86c0117f169f34, type: 2}

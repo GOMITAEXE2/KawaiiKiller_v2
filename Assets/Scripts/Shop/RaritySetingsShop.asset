@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad1835a3e48d4214dba03e4629c5e79b, type: 3}
+  m_Name: RaritySetingsShop
+  m_EditorClassIdentifier: 
+  SimpleWeight: 0.6
+  RaraWeight: 0.25
+  "Extra\xF1aWeight": 0.12
+  LegendariaWeight: 0.03
