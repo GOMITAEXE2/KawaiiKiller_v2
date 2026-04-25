@@ -566,6 +566,7 @@ GameObject:
   - component: {fileID: 7085640753660087928}
   - component: {fileID: 1345609878345230174}
   - component: {fileID: 6710079562547755802}
+  - component: {fileID: 7766556649105966034}
   - component: {fileID: 8220950025296829366}
   m_Layer: 5
   m_Name: Page_01
@@ -573,7 +574,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7085640753660087928
 RectTransform:
   m_ObjectHideFlags: 0
@@ -636,6 +637,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &7766556649105966034
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3782792571183823132}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!114 &8220950025296829366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -673,7 +686,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4692459992426987160
 RectTransform:
   m_ObjectHideFlags: 0
@@ -893,12 +906,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0dcb9be21ef61e94e9712dd684069aa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pages:
-  - {fileID: 8220950025296829366}
+  roundComics: []
+  introPages: []
   continueButton: {fileID: 780050549055485851}
   skipButton: {fileID: 7344266011034172476}
+  mainCanvasGroup: {fileID: 0}
   fadeDuration: 0.3
   pageFadeDuration: 0.4
+  useIntroOnly: 0
+  hideOnAwake: 1
 --- !u!1 &6373476103642250501
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,7 +933,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1150661234223213380
 RectTransform:
   m_ObjectHideFlags: 0

@@ -29,6 +29,8 @@ public class WaveManager : MonoBehaviour
 
     public IReadOnlyDictionary<string, int> KillsByType => _killsByType;
     public int TotalRewardThisRound { get; private set; }
+    public float TotalDamageDealt { get; private set; }
+    public float MaxDamageInSingleHit { get; private set; }
 
     private void Awake()
     {
@@ -51,6 +53,8 @@ public class WaveManager : MonoBehaviour
         EnemiesKilled  = 0;
         EnemiesAlive   = 0;
         TotalRewardThisRound = 0;
+        TotalDamageDealt = 0;
+        MaxDamageInSingleHit = 0;
         _killsByType.Clear();
 
         Debug.Log($"[WaveManager] StartRound: {roundNumber}, total enemies: {TotalThisRound}");
@@ -72,14 +76,17 @@ public class WaveManager : MonoBehaviour
         EnemiesAlive++;
     }
 
-    public void RegisterEnemyDeath(string enemyType)
+    public void RegisterEnemyDeath(string enemyType, EnemyCategory category)
     {
+        string key = category.ToString(); // Use category (Small, Medium, etc) for the stats dictionary
+        if (string.IsNullOrEmpty(key)) key = "Unknown";
+
         EnemiesAlive = Mathf.Max(0, EnemiesAlive - 1);
         EnemiesKilled++;
 
-        if (!_killsByType.ContainsKey(enemyType))
-            _killsByType[enemyType] = 0;
-        _killsByType[enemyType]++;
+        if (!_killsByType.ContainsKey(key))
+            _killsByType[key] = 0;
+        _killsByType[key]++;
 
         int reward = CalculateReward(enemyType);
         TotalRewardThisRound += reward;
@@ -91,6 +98,15 @@ public class WaveManager : MonoBehaviour
 
         if (EnemiesKilled >= TotalThisRound && EnemiesAlive <= 0)
             EndRound();
+    }
+
+    public void RegisterDamage(float amount)
+    {
+        TotalDamageDealt += amount;
+        if (amount > MaxDamageInSingleHit)
+        {
+            MaxDamageInSingleHit = amount;
+        }
     }
 
     public int CalculateReward(string enemyType)
@@ -112,6 +128,7 @@ public class WaveManager : MonoBehaviour
 
     private void EndRound()
     {
+        Debug.Log($"[WaveManager] EndRound called for round {CurrentRound}. Enemies killed: {EnemiesKilled}/{TotalThisRound}");
         OnRoundEnded?.Invoke(CurrentRound);
     }
 }

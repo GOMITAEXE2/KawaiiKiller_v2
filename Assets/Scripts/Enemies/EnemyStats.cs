@@ -1,8 +1,12 @@
 using UnityEngine;
 
+public enum EnemyCategory { Small, Medium, Large, Elite, Boss }
+
 [CreateAssetMenu(fileName = "NewEnemyStats", menuName = "KawaiiKiller/Enemy Stats")]
 public class EnemyStats : ScriptableObject
 {
+    public EnemyCategory category = EnemyCategory.Small;
+
     [Header("Base Stats")]
     public float baseHealth        = 100f;
     public float baseDamage        = 10f;

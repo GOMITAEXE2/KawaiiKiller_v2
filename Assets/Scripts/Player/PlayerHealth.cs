@@ -2,10 +2,11 @@ using System;
 using UnityEngine;
 using KawaiiKiller.Player;
 using KawaiiKiller.Core;
+using KawaiiKiller.Weapons;
 
 namespace KawaiiKiller.Player
 {
-    public class PlayerHealth : MonoBehaviour
+    public class PlayerHealth : MonoBehaviour, IDamageable
     {
         [SerializeField] private float maxHealth  = 100f;
         [SerializeField] private WinLoseHandler winLoseHandler;
@@ -22,6 +23,11 @@ namespace KawaiiKiller.Player
         {
             MaxHealth     = maxHealth;
             CurrentHealth = MaxHealth;
+        }
+
+        public void TakeDamage(DamagePayload payload)
+        {
+            TakeDamage(payload.BaseDamage);
         }
 
         public void TakeDamage(float amount)

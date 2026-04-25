@@ -66,9 +66,6 @@ namespace KawaiiKiller.Cinematics
             if ((introPages == null || introPages.Count == 0) && (roundComics == null || roundComics.Count == 0))
             {
                 Debug.LogError("‼️ ERROR CRÍTICO: El ComicManager no tiene páginas asignadas ni en el Inspector ni en la Jerarquía.");
-                #if UNITY_EDITOR
-                Debug.Break(); // Stop editor to prevent wasting time in debug
-                #endif
             }
 
             // Ensure initial visibility state

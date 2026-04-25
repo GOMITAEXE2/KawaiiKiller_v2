@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 1760589477680456172}
   - component: {fileID: 4560594892898381904}
   - component: {fileID: 3845253150315917912}
-  - component: {fileID: 3391364551065130033}
   - component: {fileID: -4558300899406610503}
+  - component: {fileID: 3391364551065130033}
   - component: {fileID: 890776083177497327}
+  - component: {fileID: -967782436112939796}
+  - component: {fileID: -5859756088314449498}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -32,7 +34,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.5973, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -110,19 +112,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &3391364551065130033
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1606690660320641413}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 616399912189af944bad441d4ebb0fca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  stats: {fileID: 11400000, guid: 4a83cf707dfd2c0479e6d8ac9345916f, type: 2}
 --- !u!195 &-4558300899406610503
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -145,6 +134,19 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &3391364551065130033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606690660320641413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 616399912189af944bad441d4ebb0fca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 11400000, guid: 4a83cf707dfd2c0479e6d8ac9345916f, type: 2}
 --- !u!114 &890776083177497327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,12 +159,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1f85a58d2cc1c94e85ce450868f2b75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sightRange: 15
-  sightAngle: 110
-  sightMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  patrolWaypoints: []
-  waypointTolerance: 0.5
-  waypointWaitTime: 1.5
   attackAngleTolerance: 25
+--- !u!114 &-967782436112939796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606690660320641413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b7d9c7df3f39be4c9874ded8514c0d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-5859756088314449498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1606690660320641413}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b9a7eb8557dda542b14622432eb3ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,6 +1,7 @@
 using UnityEngine;
+using KawaiiKiller.Weapons;
 
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, IDamageable
 {
     [SerializeField] private EnemyStats stats;
 
@@ -10,6 +11,7 @@ public class EnemyController : MonoBehaviour
     public float MoveSpeed      { get; private set; }
     public float AttackRange    { get; private set; }
     public float AttackCooldown { get; private set; }
+    public EnemyStats Stats => stats;
     public bool  IsDead         { get; private set; }
 
     private EnemyInfo _enemyInfo;
@@ -33,12 +35,20 @@ public class EnemyController : MonoBehaviour
         IsDead         = false;
     }
 
+    public void TakeDamage(DamagePayload payload)
+    {
+        TakeDamage(payload.BaseDamage);
+    }
+
     public void TakeDamage(float amount)
     {
         if (IsDead) return;
 
         CurrentHealth = Mathf.Max(0f, CurrentHealth - amount);
         OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
+
+        // Notify damage tracking
+        WaveManager.Instance?.RegisterDamage(amount);
 
         if (CurrentHealth <= 0f)
             Die();
@@ -59,8 +69,9 @@ public class EnemyController : MonoBehaviour
 
         OnDeath?.Invoke();
 
-        string enemyType = _enemyInfo != null ? _enemyInfo.EnemyType : "Unknown";
-        WaveManager.Instance.RegisterEnemyDeath(enemyType);
+        string enemyType = (_enemyInfo != null && !string.IsNullOrEmpty(_enemyInfo.EnemyType)) ? _enemyInfo.EnemyType : "Unknown";
+        EnemyCategory category = _enemyInfo != null ? _enemyInfo.Category : EnemyCategory.Small;
+        WaveManager.Instance.RegisterEnemyDeath(enemyType, category);
 
         Destroy(gameObject, 0.15f);
     }

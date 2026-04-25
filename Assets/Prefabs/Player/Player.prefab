@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 6360428828689543857}
   - component: {fileID: 5689336272943144306}
   - component: {fileID: 6588717781226672874}
+  - component: {fileID: 822616987685873126}
   m_Layer: 0
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -141,6 +142,20 @@ MonoBehaviour:
   crouchCameraTargetHeight: 0.7
   toggleCrouch: 1
   toggleSprint: 0
+--- !u!114 &822616987685873126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91695675550278974}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f054b95ac4b45e449ac3cd0a1503bf5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  winLoseHandler: {fileID: 0}
 --- !u!1 &613300022284843272
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +295,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1062979169811394091}
+  - component: {fileID: 2804909241074926341}
   m_Layer: 0
   m_Name: PlayerWeaponController
   m_TagString: Untagged
@@ -303,6 +319,26 @@ Transform:
   - {fileID: 3782142204762000279}
   m_Father: {fileID: 3766516555167605067}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2804909241074926341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1725200451839741955}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f3f49412f34d3b468c7f4b6de3bd010, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  fistsWeapon: {fileID: 11400000, guid: 504d3334e96ccd74f97e1e6378cb239f, type: 2}
+  weaponParent: {fileID: 3782142204762000279}
+  weaponFirePort: {fileID: 3436911931670694121}
+  baseCapacity: 4
 --- !u!1 &3037025700170218196
 GameObject:
   m_ObjectHideFlags: 0

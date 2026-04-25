@@ -43,9 +43,21 @@ namespace KawaiiKiller.Weapons
                     _sourceWeapon.OnProjectileHit(hit.collider.gameObject, ref hitPayload);
                 }
 
-                if (hit.collider.TryGetComponent<DamageableLink>(out var damageableLink) && damageableLink.Damageable != null)
+                // 1. Try to find via DamageableLink (standard pattern)
+                if (hit.collider.TryGetComponent<DamageableLink>(out var damageableLink))
                 {
-                    damageableLink.Damageable.TakeDamage(hitPayload);
+                    if (damageableLink.Damageable != null)
+                        damageableLink.Damageable.TakeDamage(hitPayload);
+                }
+                // 2. Fallback: Try to find any IDamageable directly on the object or its parent
+                else if (hit.collider.TryGetComponent<IDamageable>(out var directDamageable))
+                {
+                    directDamageable.TakeDamage(hitPayload);
+                }
+                else
+                {
+                    var parentDamageable = hit.collider.GetComponentInParent<IDamageable>();
+                    parentDamageable?.TakeDamage(hitPayload);
                 }
                 transform.position = hit.point;
                 Destroy(gameObject);

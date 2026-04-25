@@ -130,11 +130,15 @@ public class EnemySpawner : MonoBehaviour
         GameObject enemy = Instantiate(entry.prefab, point.transform.position, point.transform.rotation);
         enemy.name = entry.enemyName;
 
-        var enemyInfo = enemy.AddComponent<EnemyInfo>();
-        enemyInfo.Initialize(entry.enemyName, entry.isElite);
-
+        EnemyCategory category = EnemyCategory.Small;
         if (enemy.TryGetComponent<EnemyController>(out var controller))
+        {
+            category = controller.Stats != null ? controller.Stats.category : EnemyCategory.Small;
             controller.InitializeForRound(currentRound);
+        }
+
+        var enemyInfo = enemy.AddComponent<EnemyInfo>();
+        enemyInfo.Initialize(entry.enemyName, category, entry.isElite);
 
         if (enemy.TryGetComponent<EnemyAI>(out var ai))
             ai.Initialize();

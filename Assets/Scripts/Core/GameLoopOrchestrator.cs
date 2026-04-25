@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using KawaiiKiller.Cinematics;
+using KawaiiKiller.Player;
+using KawaiiKiller.Weapons;
 
 namespace KawaiiKiller.Core
 {
@@ -40,6 +42,7 @@ namespace KawaiiKiller.Core
             DontDestroyOnLoad(gameObject);
             _inputEnabled = false;
             _spawningEnabled = false;
+            Time.timeScale = 1f; // Ensure time is running at start
         }
 
         private void Start()
@@ -150,13 +153,13 @@ namespace KawaiiKiller.Core
         public void LockInput()
         {
             _inputEnabled = false;
-            _player?.SetInputEnabled(false);
+            _player?.SetUIMode(true); // Unlock cursor for UI/Cinematics
         }
 
         public void UnlockInput()
         {
             _inputEnabled = true;
-            _player?.SetInputEnabled(true);
+            _player?.SetUIMode(false); // Lock cursor for Gameplay
         }
 
         public void LockSpawning()
@@ -209,19 +212,60 @@ namespace KawaiiKiller.Core
 
         private void ReloadGameScene(Action onLoaded)
         {
-            SceneLoader.Instance.LoadScene(gameScene, onLoaded);
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.LoadScene(gameScene, onLoaded);
+            }
+            else
+            {
+                Debug.LogWarning("[Orchestrator] SceneLoader is null! Falling back to standard SceneManager (Editor testing).");
+                StartCoroutine(FallbackLoadScene(gameScene, onLoaded));
+            }
+        }
+
+        private IEnumerator FallbackLoadScene(string sceneName, Action onLoaded)
+        {
+            AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
+            while (!op.isDone) yield return null;
+            
+            onLoaded?.Invoke();
+            Reinitialize();
         }
 
         public void GoToShop()
         {
-            LockInput();
+            UnlockInput();
             LockSpawning();
-            SceneLoader.Instance.LoadScene(shopScene);
+            
+            if (SceneLoader.Instance != null)
+            {
+                SceneLoader.Instance.LoadScene(shopScene);
+            }
+            else
+            {
+                Debug.LogWarning("[Orchestrator] SceneLoader is null! Falling back to standard SceneManager (Editor testing).");
+                SceneManager.LoadScene(shopScene);
+            }
         }
 
         public void CompleteRound()
         {
+            SaveCurrentProgress();
             OnRoundComplete?.Invoke();
+        }
+
+        private void SaveCurrentProgress()
+        {
+            if (GameManager.Instance == null || !GameManager.Instance.IsStoryMode) return;
+
+            var economy = FindObjectOfType<Player.Player>()?.GetComponent<PlayerEconomy>();
+            var weaponController = FindObjectOfType<PlayerWeaponController>();
+
+            if (economy != null && weaponController != null)
+            {
+                Debug.Log($"[Orchestrator] Saving progress: Round {_currentRound}, Money {economy.CurrentMoney}");
+                SaveSystem.Instance?.Save(economy, weaponController);
+            }
         }
     }
 }

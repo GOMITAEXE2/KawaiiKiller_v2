@@ -8,7 +8,7 @@ namespace KawaiiKiller.Weapons
 
         private void Awake()
         {
-            Damageable = GetComponent<IDamageable>();
+            Damageable = GetComponentInParent<IDamageable>();
         }
     }
 }

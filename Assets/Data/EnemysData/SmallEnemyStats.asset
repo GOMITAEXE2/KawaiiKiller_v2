@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80241467c9f82db46ae030e6a23d610b, type: 3}
   m_Name: SmallEnemyStats
   m_EditorClassIdentifier: 
-  baseHealth: 100
+  category: 0
+  baseHealth: 20
   baseDamage: 10
   baseMoveSpeed: 3.5
   baseAttackRange: 1.5

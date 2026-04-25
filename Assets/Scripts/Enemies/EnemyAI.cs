@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 using KawaiiKiller.Player;
+using KawaiiKiller.Weapons;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(EnemyController))]
@@ -109,8 +110,10 @@ public class EnemyAI : MonoBehaviour
 
     private void ExecuteAttack()
     {
-        if (player != null && player.TryGetComponent<PlayerHealth>(out var ph))
-            ph.TakeDamage(controller.Damage);
+        if (player != null && player.TryGetComponent<IDamageable>(out var damageable))
+        {
+            damageable.TakeDamage(new DamagePayload { BaseDamage = controller.Damage });
+        }
     }
 
     private void HandleDeath()

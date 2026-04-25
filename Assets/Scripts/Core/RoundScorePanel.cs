@@ -28,6 +28,10 @@ namespace KawaiiKiller.UI
         [Header("Reward")]
         [SerializeField] private TMP_Text totalPaidText;
 
+        [Header("Extra Stats")]
+        [SerializeField] private TMP_Text totalDamageText;
+        [SerializeField] private TMP_Text maxHitText;
+
         [Header("Buttons")]
         [SerializeField] private Button continueButton;
         [SerializeField] private Button saveAndMenuButton;
@@ -35,9 +39,19 @@ namespace KawaiiKiller.UI
         private Action _onContinue;
         private Action _onSaveAndMenu;
 
+        private void Awake()
+        {
+            if (continueButton != null)
+                continueButton.onClick.AddListener(OnContinueClicked);
+            if (saveAndMenuButton != null)
+                saveAndMenuButton.onClick.AddListener(OnSaveAndMenuClicked);
+        }
+
         public void Show(
             IReadOnlyDictionary<string, int> killsByType,
             int totalReward,
+            float totalDamage,
+            float maxHit,
             int round,
             Action onContinue,
             Action onSaveAndMenu)
@@ -60,11 +74,17 @@ namespace KawaiiKiller.UI
             if (totalKillsText != null) totalKillsText.text = total.ToString();
 
             if (totalPaidText != null) totalPaidText.text = $"{totalReward} G";
+            
+            if (totalDamageText != null) totalDamageText.text = totalDamage.ToString("N0");
+            if (maxHitText != null) maxHitText.text = maxHit.ToString("N1");
 
             string grade = CalculateGrade(total, round);
             if (gradeText != null) gradeText.text = grade;
 
             gameObject.SetActive(true);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible   = true;
+
             panelRect.localScale = Vector3.zero;
             canvasGroup.alpha = 0f;
 

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f67ee72a83923e4418b9067958d530c5, type: 3}
+  m_Name: FirstWeapon
+  m_EditorClassIdentifier: 
+  ID: First_Weapon
+  Nombre: First_Weapon
+  Precio: 0
+  Rareza: 0
+  Prefab3D: {fileID: 2830301469828374873, guid: 03cdd101af2b3724ab6e7c04d48f6729,
+    type: 3}
+  ProjectilePrefab: {fileID: 8714075147965725877, guid: 9b4a092f4421404468c75e33e53de105,
+    type: 3}
+  Icono: {fileID: 0}
+  WeaponStats:
+    BaseDamage: 15
+    FireRate: 1
+    CriticalChance: 0
+    ProjectilesPerShot: 1
+    IsAutomatic: 0
+    BaseSpreadAngle: 5
+    AimingSpreadAngle: 9
+    MagazineSize: 12
+    ReloadTime: 1.5
+  Tipos: 01000000
+  MaxUpgrades: 0
+  MaxAttachments: 0
+  StartingModifiers: []

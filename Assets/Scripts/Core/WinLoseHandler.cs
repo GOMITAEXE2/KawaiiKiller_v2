@@ -8,7 +8,7 @@ namespace KawaiiKiller.Core
         [SerializeField] private GameOverScreen gameOverScreen;
         [SerializeField] private RoundScorePanel scorePanel;
 
-        private void OnEnable()
+        private void Start()
         {
             if (WaveManager.Instance != null)
                 WaveManager.Instance.OnRoundEnded += HandleRoundEnd;
@@ -28,14 +28,17 @@ namespace KawaiiKiller.Core
 
         private void HandleRoundEnd(int completedRound)
         {
+            Debug.Log($"[WinLoseHandler] HandleRoundEnd received for round {completedRound}");
             if (scorePanel != null && WaveManager.Instance != null)
             {
                 scorePanel.Show(
                     WaveManager.Instance.KillsByType,
                     WaveManager.Instance.TotalRewardThisRound,
+                    WaveManager.Instance.TotalDamageDealt,
+                    WaveManager.Instance.MaxDamageInSingleHit,
                     completedRound,
                     OnContinueFromScore,
-                    () => { scorePanel.gameObject.SetActive(false); GameManager.Instance?.GoToMainMenu(); }
+                    () => { GameLoopOrchestrator.Instance?.CompleteRound(); scorePanel.gameObject.SetActive(false); GameManager.Instance?.GoToMainMenu(); }
                 );
             }
             else
