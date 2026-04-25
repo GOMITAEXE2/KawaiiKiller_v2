@@ -112,6 +112,8 @@ namespace KawaiiKiller.UI.Shop
         // ── Unity lifecycle ───────────────────────────────────────────────────────
         private void Awake()
         {
+            ResolveDependencies();
+
             _cardPool = new ObjectPool<ItemCardUI>(
                 CreateCard, OnGetCard, OnReleaseCard, OnDestroyCard, true, 8, 512);
 
@@ -125,6 +127,18 @@ namespace KawaiiKiller.UI.Shop
 
             ApplyPanelState(false);
             ApplyInventoryState(false);
+        }
+
+        private void ResolveDependencies()
+        {
+            if (player == null) player = FindObjectOfType<KawaiiKiller.Player.Player>();
+            if (playerEconomy == null) playerEconomy = FindObjectOfType<PlayerEconomy>();
+            if (playerWeaponController == null) playerWeaponController = FindObjectOfType<PlayerWeaponController>();
+
+            if (player == null || playerEconomy == null || playerWeaponController == null)
+            {
+                Debug.LogError("[ShopUIManager] CRITICAL ERROR: Player, PlayerEconomy, or PlayerWeaponController dependency not found in scene!");
+            }
         }
 
         private void OnEnable()

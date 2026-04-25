@@ -30,6 +30,15 @@ namespace KawaiiKiller.Debugging
         private float _lastBurnTickTime = -1f;
         private const float BURN_INDICATOR_DURATION = 1.2f; // How long "BURNING" stays visible after a tick
 
+        private void Awake()
+        {
+            if (weaponController == null)
+                weaponController = FindObjectOfType<PlayerWeaponController>();
+
+            if (weaponController == null)
+                Debug.LogError("[WeaponUpgradeDebugConsole] CRITICAL ERROR: PlayerWeaponController dependency not found!");
+        }
+
         private void OnEnable()
         {
             if (weaponController != null) weaponController.OnShotFired += HandleShot;

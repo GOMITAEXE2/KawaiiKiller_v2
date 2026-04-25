@@ -22,6 +22,23 @@ namespace KawaiiKiller.Core
         private bool       _playerInRange;
         private Collider[] _overlapBuffer = new Collider[4];
 
+        private void Awake()
+        {
+            ResolveDependencies();
+        }
+
+        private void ResolveDependencies()
+        {
+            if (shopUIManager == null) shopUIManager = FindObjectOfType<ShopUIManager>();
+            if (promptUI == null)      promptUI      = FindObjectOfType<InteractPromptUI>();
+            if (playerHealth == null)  playerHealth  = FindObjectOfType<PlayerHealth>();
+
+            if (playerHealth == null)
+            {
+                Debug.LogError("[ShopAccessTrigger] CRITICAL ERROR: PlayerHealth dependency not found in scene!");
+            }
+        }
+
         private void Update()
         {
             bool inRange = CheckPlayerInRange();
