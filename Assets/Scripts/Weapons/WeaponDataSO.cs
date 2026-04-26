@@ -21,24 +21,21 @@ namespace KawaiiKiller.Weapons
         public int MaxAttachments;
         public List<Modifiers.ModifierDataSO> StartingModifiers;
 
-        [Header("Recoil — Cámara")]
-        public float RecoilPitchMin = 1.5f;
-        public float RecoilPitchMax = 3.0f;
-        public float RecoilKickStrength = 0.08f;
-        public float AdsRecoilMultiplier = 0.25f;
+        [Header("--- Efectos Visuales ---")]
+        [Tooltip("Prefab del efecto de impacto cuando el proyectil choca.")]
+        public GameObject ImpactEffectPrefab;
+        
+        [Tooltip("Color tintado del proyectil.")]
+        public Color ProjectileColor = Color.yellow;
 
-        [Header("Recoil — Modelo del arma")]
-        public Vector3 KickPositionOffset = new Vector3(0f, 0.02f, -0.08f);
-        public Vector3 KickRotationOffset = new Vector3(-8f, 0f, 0f);
-        public float KickReturnSpeed = 10f;
-
-        [Header("Effects")]
         [Tooltip("Prefab de partículas del fogonazo. Se instancia en el FirePoint al disparar.")]
         public GameObject MuzzleFlashPrefab;
 
         [Tooltip("Prefab de partículas de humo post-disparo. Se instancia cuando el arma deja de disparar.")]
         public GameObject SmokeEffectPrefab;
 
+        [Space(10)]
+        [Header("--- Efectos de Sonido ---")]
         [Tooltip("Sonido que se reproduce al disparar.")]
         public AudioClip FireSound;
 
@@ -52,8 +49,19 @@ namespace KawaiiKiller.Weapons
         [Tooltip("Volumen del sonido de recarga (0-1).")]
         [Range(0f, 1f)]
         public float ReloadSoundVolume = 0.6f;
-        public GameObject ImpactEffectPrefab;
-        public Color ProjectileColor = Color.yellow;
+
+        [Space(10)]
+        [Header("--- Recoil y Retroceso (Cámara) ---")]
+        public float RecoilPitchMin = 1.5f;
+        public float RecoilPitchMax = 3.0f;
+        public float RecoilKickStrength = 0.08f;
+        public float AdsRecoilMultiplier = 0.25f;
+
+        [Space(10)]
+        [Header("--- Recoil y Retroceso (Arma) ---")]
+        public Vector3 KickPositionOffset = new Vector3(0f, 0.02f, -0.08f);
+        public Vector3 KickRotationOffset = new Vector3(-8f, 0f, 0f);
+        public float KickReturnSpeed = 10f;
         public Sprite Icon  => Icono;
         public int Price    => Precio;
     }
