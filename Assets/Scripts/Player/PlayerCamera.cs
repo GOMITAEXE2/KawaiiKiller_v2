@@ -27,4 +27,10 @@ public class PlayerCamera : MonoBehaviour
     {
         transform.position = target.position;
     }
+
+    public void AddRecoilPitch(float degrees)
+    {
+        _eulerAngles.x -= degrees;
+        transform.eulerAngles = _eulerAngles;
+    }
 }

@@ -624,6 +624,7 @@ GameObject:
   - component: {fileID: 3798196662364369799}
   - component: {fileID: 1947385416822925579}
   - component: {fileID: 1825575326990009489}
+  - component: {fileID: 5720128313283358991}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -692,6 +693,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e5e398951389d1e43a6ea26eb27822e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5720128313283358991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7605773453570776223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 260179b1690e8604b874fb5b5c68a5d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerCamera: {fileID: 4666659616428838118}
+  cameraSpring: {fileID: 1239511379475031622}
+  recoilPitchMin: 1.5
+  recoilPitchMax: 3
+  recoilKickStrength: 0.08
+  adsRecoilMultiplier: 0.25
+  recoilRecoverySpeed: 8
+  weaponKickParent: {fileID: 0}
+  kickPositionOffset: {x: 0, y: 0.02, z: -0.08}
+  kickRotationOffset: {x: -8, y: 0, z: 0}
+  kickReturnSpeed: 10
 --- !u!1 &8432005227199142226
 GameObject:
   m_ObjectHideFlags: 0

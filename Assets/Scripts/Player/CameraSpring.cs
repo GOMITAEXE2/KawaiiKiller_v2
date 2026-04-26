@@ -53,4 +53,9 @@ public class CameraSpring : MonoBehaviour
         current = detX * detInv;
         velocity = detV * detInv;
     }
+
+    public void AddImpulse(Vector3 worldImpulse)
+    {
+        _springVelocity += worldImpulse;
+    }
 }

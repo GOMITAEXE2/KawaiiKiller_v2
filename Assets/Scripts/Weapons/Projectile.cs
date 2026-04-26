@@ -26,6 +26,21 @@ namespace KawaiiKiller.Weapons
             _sourceWeapon = sourceWeapon;
         }
 
+        public void SetVisuals(Color color)
+        {
+            foreach (var r in GetComponentsInChildren<Renderer>())
+            {
+                if (r.material != null)
+                    r.material.color = color;
+            }
+            var trail = GetComponent<TrailRenderer>();
+            if (trail != null)
+            {
+                trail.startColor = color;
+                trail.endColor   = new Color(color.r, color.g, color.b, 0f);
+            }
+        }
+
         private void Update()
         {
             if (!_isInitialized) return;
@@ -59,6 +74,17 @@ namespace KawaiiKiller.Weapons
                     var parentDamageable = hit.collider.GetComponentInParent<IDamageable>();
                     parentDamageable?.TakeDamage(hitPayload);
                 }
+
+                // Spawn impact effect at collision point
+                if (_sourceWeapon?.Data?.ImpactEffectPrefab != null)
+                {
+                    GameObject fx = Instantiate(
+                        _sourceWeapon.Data.ImpactEffectPrefab,
+                        hit.point,
+                        Quaternion.LookRotation(hit.normal));
+                    Destroy(fx, 2f);
+                }
+
                 transform.position = hit.point;
                 Destroy(gameObject);
                 return;

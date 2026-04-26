@@ -49,6 +49,13 @@ namespace KawaiiKiller.Player
         [FormerlySerializedAs("loadoutCapacity")]
         [SerializeField] private int baseCapacity = 4;
 
+        [Header("Recoil References")]
+        [SerializeField] private PlayerCamera playerCamera;
+        [SerializeField] private CameraSpring cameraSpring;
+
+        [Header("Recoil Recovery")]
+        [SerializeField] private float recoilRecoverySpeed = 8f;
+
         // ── Runtime ────────────────────────────────────────────────────────────────
         private readonly List<WeaponInstance> _loadout = new List<WeaponInstance>();
         private int         _currentWeaponIndex  = -1;
@@ -62,6 +69,20 @@ namespace KawaiiKiller.Player
         private float       _nextFireTime;
         private int         _capacityBonus       = 0;
         private readonly List<string> _activatedEffectsBuffer = new List<string>(8);
+        private PlayerInputActions _inputActions;
+
+        // ── Recoil state ──────────────────────────────────────────────────────────
+        private float   _accumulatedPitch;
+        private Vector3 _currentKickPos;
+        private Vector3 _currentKickRot;
+        private Vector3 _weaponParentOriginalPos;
+        private Vector3 _weaponParentOriginalRot;
+        private bool    _weaponParentOriginCaptured;
+
+        // ── Effects state ─────────────────────────────────────────────────────────
+        private AudioSource    _audioSource;
+        private GameObject     _activeMuzzleFlash;
+        private bool           _wasFiringLastFrame;
 
         // ── Eventos ────────────────────────────────────────────────────────────────
         public static event Action    OnInventoryToggled;
@@ -76,6 +97,8 @@ namespace KawaiiKiller.Player
 
         // Alias mantenido por compatibilidad con otros scripts que lo referencien
         public int LoadoutCapacity => CurrentCapacity;
+
+        public bool IsAiming => _isAiming;
 
         /// <summary>El arma de fallback (puños). La UI la usa para distinguir
         /// si el jugador tiene armas reales o solo el fallback.</summary>
@@ -95,6 +118,21 @@ namespace KawaiiKiller.Player
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
+
+            _inputActions = new PlayerInputActions();
+            _inputActions.Enable();
+
+            // Asegurar que existe un AudioSource para los efectos de sonido
+            _audioSource = GetComponent<AudioSource>();
+            if (_audioSource == null)
+                _audioSource = gameObject.AddComponent<AudioSource>();
+            _audioSource.playOnAwake = false;
+            _audioSource.spatialBlend = 0f; // 2D para el jugador local
+        }
+
+        private void OnDestroy()
+        {
+            _inputActions?.Dispose();
         }
 
         private void Start()
@@ -107,6 +145,8 @@ namespace KawaiiKiller.Player
 
         private void Update()
         {
+            UpdateRecoilRecovery();
+
             if (_externalInputLocked) return;
             HandleInventoryInput();
             if (_isInventoryOpen || CurrentWeapon == null) return;
@@ -115,6 +155,12 @@ namespace KawaiiKiller.Player
             HandleAimingInput();
 
             if (_currentState == WeaponState.Reloading) return;
+
+            // Detectar si el jugador dejó de disparar para el efecto de humo
+            bool isFiringThisFrame = _currentState == WeaponState.Shooting;
+            if (_wasFiringLastFrame && !isFiringThisFrame)
+                SpawnSmokeEffect();
+            _wasFiringLastFrame = isFiringThisFrame;
 
             HandleShootingInput();
             HandleReloadInput();
@@ -150,7 +196,24 @@ namespace KawaiiKiller.Player
 
         private void HandleAimingInput()
         {
-            _isAiming = Input.GetMouseButton(1);
+            bool aimFromActions = false;
+            try 
+            { 
+                // Use reflection to avoid compile errors if 'Aim' is not yet defined in the generated class
+                var gameplay = _inputActions.Gameplay;
+                var aimProp = gameplay.GetType().GetProperty("Aim");
+                if (aimProp != null)
+                {
+                    var action = aimProp.GetValue(gameplay) as UnityEngine.InputSystem.InputAction;
+                    if (action != null)
+                    {
+                        aimFromActions = action.ReadValue<float>() > 0.5f;
+                    }
+                }
+            }
+            catch { /* action not defined yet in the Input Asset */ }
+            
+            _isAiming = aimFromActions || Input.GetMouseButton(1);
         }
 
         private void HandleWeaponSwitchInput()
@@ -198,6 +261,11 @@ namespace KawaiiKiller.Player
                 _activeFirePort = weaponFirePort;
             }
 
+            // Capturar posición original del weaponParent y resetear kick
+            CaptureWeaponParentOrigin();
+            _currentKickPos = Vector3.zero;
+            _currentKickRot = Vector3.zero;
+
             _currentState  = WeaponState.Idle;
             _nextFireTime  = Time.time;
             OnCurrentWeaponIndexChanged?.Invoke(_currentWeaponIndex);
@@ -237,11 +305,43 @@ namespace KawaiiKiller.Player
 
             if (projectilePrefab != null && spawnPort != null)
             {
-                Vector3    aimDir     = directionPort.forward;
-                Projectile projectile = Instantiate(projectilePrefab, spawnPort.position, Quaternion.LookRotation(aimDir));
-                projectile.SetSourceWeapon(CurrentWeapon);
-                projectile.Initialize(payload, aimDir, 140f, 5f);
+                float spreadAngle = _isAiming
+                    ? CurrentWeapon.FinalStats.AimingSpreadAngle
+                    : CurrentWeapon.FinalStats.BaseSpreadAngle;
+
+                int projectileCount = Mathf.Max(1, CurrentWeapon.FinalStats.ProjectilesPerShot);
+                float speed         = CurrentWeapon.FinalStats.FinalProjectileSpeed;
+                Color color         = CurrentWeapon.Data.ProjectileColor;
+
+#if UNITY_EDITOR
+                // Verde: dirección a la que apunta la cámara del jugador
+                Debug.DrawRay(directionPort.position, directionPort.forward * 25f, Color.green, 2f);
+#endif
+
+                for (int i = 0; i < projectileCount; i++)
+                {
+                    Vector2 randomCircle = UnityEngine.Random.insideUnitCircle * Mathf.Tan(spreadAngle * Mathf.Deg2Rad);
+                    Vector3 spreadDir    = directionPort.TransformDirection(
+                        new Vector3(randomCircle.x, randomCircle.y, 1f)).normalized;
+
+#if UNITY_EDITOR
+                    // Azul: trayectoria real de este proyectil desde el cañón del arma
+                    Debug.DrawRay(spawnPort.position, spreadDir * 25f, Color.blue, 2f);
+#endif
+
+                    Projectile p = Instantiate(projectilePrefab, spawnPort.position, Quaternion.LookRotation(spreadDir));
+                    p.SetSourceWeapon(CurrentWeapon);
+                    p.Initialize(payload, spreadDir, speed, 5f);
+                    p.SetVisuals(color);
+                }
             }
+
+            // Aplicar recoil del arma activa
+            ApplyRecoil();
+
+            // Efectos visuales y de sonido
+            PlayMuzzleFlash();
+            PlayFireSound();
 
             _currentState = WeaponState.Idle;
 
@@ -275,6 +375,10 @@ namespace KawaiiKiller.Player
         private IEnumerator ReloadRoutine()
         {
             _currentState = WeaponState.Reloading;
+
+            // Sonido de recarga del arma activa
+            PlayReloadSound();
+
             float time    = Mathf.Max(0f, CurrentWeapon.FinalStats.ReloadTime);
             yield return new WaitForSeconds(time);
 
@@ -401,6 +505,122 @@ namespace KawaiiKiller.Player
             if (_loadout.Count > 0) return;
             if (fistsWeapon == null) return;
             _loadout.Add(new WeaponInstance(fistsWeapon));
+        }
+
+        // ── Recoil ────────────────────────────────────────────────────────────────
+        private void CaptureWeaponParentOrigin()
+        {
+            if (weaponParent == null) { _weaponParentOriginCaptured = false; return; }
+            _weaponParentOriginalPos     = weaponParent.localPosition;
+            _weaponParentOriginalRot     = weaponParent.localEulerAngles;
+            _weaponParentOriginCaptured  = true;
+        }
+
+        private void ApplyRecoil()
+        {
+            WeaponDataSO data = CurrentWeapon?.Data;
+            if (data == null) return;
+
+            float multiplier = _isAiming ? data.AdsRecoilMultiplier : 1f;
+
+            // ── Cámara: pitch instantáneo ──────────────────────────────────────
+            float pitch = UnityEngine.Random.Range(data.RecoilPitchMin, data.RecoilPitchMax) * multiplier;
+            _accumulatedPitch += pitch;
+            if (playerCamera != null)
+                playerCamera.AddRecoilPitch(pitch);
+
+            // ── Cámara: impulso al spring ──────────────────────────────────────
+            if (cameraSpring != null && playerCamera != null)
+            {
+                Vector3 kickBack = -playerCamera.transform.forward * data.RecoilKickStrength * multiplier;
+                cameraSpring.AddImpulse(kickBack);
+            }
+
+            // ── Modelo: kick aditivo ───────────────────────────────────────────
+            if (weaponParent != null && _weaponParentOriginCaptured)
+            {
+                _currentKickPos += data.KickPositionOffset * multiplier;
+                _currentKickRot += data.KickRotationOffset * multiplier;
+
+                // Clamp para no acumular infinitamente en ráfagas
+                float maxZ = Mathf.Abs(data.KickPositionOffset.z) * 2.5f;
+                _currentKickPos.z = Mathf.Clamp(_currentKickPos.z, -maxZ, maxZ);
+                float maxX = Mathf.Abs(data.KickRotationOffset.x) * 2.5f;
+                _currentKickRot.x = Mathf.Clamp(_currentKickRot.x, -maxX, maxX);
+            }
+        }
+
+        private void UpdateRecoilRecovery()
+        {
+            // ── Recovery de cámara ─────────────────────────────────────────────
+            if (Mathf.Abs(_accumulatedPitch) > 0.001f)
+            {
+                float delta = _accumulatedPitch * recoilRecoverySpeed * Time.deltaTime;
+                _accumulatedPitch -= delta;
+                if (playerCamera != null)
+                    playerCamera.AddRecoilPitch(-delta);
+            }
+            else
+            {
+                _accumulatedPitch = 0f;
+            }
+
+            // ── Recovery del modelo del arma ───────────────────────────────────
+            if (weaponParent != null && _weaponParentOriginCaptured)
+            {
+                float returnSpeed = 10f;
+                if (CurrentWeapon?.Data != null)
+                    returnSpeed = CurrentWeapon.Data.KickReturnSpeed;
+
+                _currentKickPos = Vector3.Lerp(_currentKickPos, Vector3.zero, returnSpeed * Time.deltaTime);
+                _currentKickRot = Vector3.Lerp(_currentKickRot, Vector3.zero, returnSpeed * Time.deltaTime);
+
+                weaponParent.localPosition    = _weaponParentOriginalPos + _currentKickPos;
+                weaponParent.localEulerAngles = _weaponParentOriginalRot + _currentKickRot;
+            }
+        }
+
+        // ── Efectos visuales y de sonido ───────────────────────────────────────────
+        private void PlayMuzzleFlash()
+        {
+            WeaponDataSO data = CurrentWeapon?.Data;
+            if (data == null || data.MuzzleFlashPrefab == null) return;
+
+            Transform spawnPoint = _activeFirePort != null ? _activeFirePort : weaponFirePort;
+            if (spawnPoint == null) return;
+
+            // Destruir el fogonazo anterior si existe
+            if (_activeMuzzleFlash != null)
+                Destroy(_activeMuzzleFlash);
+
+            _activeMuzzleFlash = Instantiate(data.MuzzleFlashPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
+            Destroy(_activeMuzzleFlash, 0.15f);
+        }
+
+        private void PlayFireSound()
+        {
+            WeaponDataSO data = CurrentWeapon?.Data;
+            if (data == null || data.FireSound == null || _audioSource == null) return;
+            _audioSource.PlayOneShot(data.FireSound, data.FireSoundVolume);
+        }
+
+        private void PlayReloadSound()
+        {
+            WeaponDataSO data = CurrentWeapon?.Data;
+            if (data == null || data.ReloadSound == null || _audioSource == null) return;
+            _audioSource.PlayOneShot(data.ReloadSound, data.ReloadSoundVolume);
+        }
+
+        private void SpawnSmokeEffect()
+        {
+            WeaponDataSO data = CurrentWeapon?.Data;
+            if (data == null || data.SmokeEffectPrefab == null) return;
+
+            Transform spawnPoint = _activeFirePort != null ? _activeFirePort : weaponFirePort;
+            if (spawnPoint == null) return;
+
+            GameObject smoke = Instantiate(data.SmokeEffectPrefab, spawnPoint.position, spawnPoint.rotation, spawnPoint);
+            Destroy(smoke, 2f);
         }
     }
 }

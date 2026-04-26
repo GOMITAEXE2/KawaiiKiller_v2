@@ -23,15 +23,25 @@ MonoBehaviour:
   Icono: {fileID: 0}
   WeaponStats:
     BaseDamage: 15
-    FireRate: 1
+    FireRate: 0.2
     CriticalChance: 0
     ProjectilesPerShot: 1
-    IsAutomatic: 0
+    IsAutomatic: 1
     BaseSpreadAngle: 5
     AimingSpreadAngle: 9
     MagazineSize: 12
     ReloadTime: 1.5
+    ProjectileSpeed: 100
   Tipos: 01000000
   MaxUpgrades: 0
   MaxAttachments: 0
   StartingModifiers: []
+  ImpactEffectPrefab: {fileID: 0}
+  ProjectileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  RecoilPitchMin: 1.5
+  RecoilPitchMax: 3
+  RecoilKickStrength: 0.08
+  AdsRecoilMultiplier: 0.25
+  KickPositionOffset: {x: 0, y: 0.02, z: 0.08}
+  KickRotationOffset: {x: 8, y: 0, z: 0}
+  KickReturnSpeed: 10
