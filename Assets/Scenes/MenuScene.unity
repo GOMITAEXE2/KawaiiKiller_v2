@@ -37,7 +37,7 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
+  m_Sun: {fileID: 615910795}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -96,7 +96,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 20a87ee6fa3cdf44b8866ca0e8946890,
+    type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -4562,6 +4563,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dfcc16eedda3264899eb04651b76f70, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  loadingCanvasGroup: {fileID: 0}
+  loadingVideo: {fileID: 0}
+  loadingGifIndicator: {fileID: 0}
 --- !u!1 &1624880539
 GameObject:
   m_ObjectHideFlags: 0

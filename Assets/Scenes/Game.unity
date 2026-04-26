@@ -96,7 +96,8 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 88e329a71eceaae479bdead4b96da288,
+    type: 2}
   m_LightingSettings: {fileID: 0}
 --- !u!196 &4
 NavMeshSettings:
@@ -2055,7 +2056,7 @@ PrefabInstance:
     - target: {fileID: 5478781742145310497, guid: d452bc86b3354aa4394c06dbbbe889c0,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6373476103642250501, guid: d452bc86b3354aa4394c06dbbbe889c0,
         type: 3}
@@ -2090,11 +2091,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 5478781742145310497, guid: d452bc86b3354aa4394c06dbbbe889c0,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1803502845}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d452bc86b3354aa4394c06dbbbe889c0, type: 3}
 --- !u!1 &811982891
 GameObject:
@@ -4113,24 +4110,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4d014778207e6e54f892b6d2f678c6f4, type: 3}
---- !u!1 &1803502839 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5478781742145310497, guid: d452bc86b3354aa4394c06dbbbe889c0,
+--- !u!225 &1803502845 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 1845173821276270681, guid: d452bc86b3354aa4394c06dbbbe889c0,
     type: 3}
   m_PrefabInstance: {fileID: 787155558}
   m_PrefabAsset: {fileID: 0}
---- !u!225 &1803502845
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1803502839}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &1806723185
 GameObject:
   m_ObjectHideFlags: 0

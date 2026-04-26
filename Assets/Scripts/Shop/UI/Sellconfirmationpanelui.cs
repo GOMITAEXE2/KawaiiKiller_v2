@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 namespace KawaiiKiller.UI.Shop
 {
@@ -25,7 +26,7 @@ namespace KawaiiKiller.UI.Shop
 
         private Action    _onConfirm;
         private Action    _onCancel;
-        private Coroutine _animRoutine;
+        private Tween     _animTween;
 
         private void Awake()
         {
@@ -56,13 +57,20 @@ namespace KawaiiKiller.UI.Shop
             if (inputBlocker != null) inputBlocker.SetActive(true);
             gameObject.SetActive(true);
 
-            if (_animRoutine != null) StopCoroutine(_animRoutine);
-            _animRoutine = StartCoroutine(PopIn());
+            _animTween?.Kill();
+            
+            if (canvasGroup != null) canvasGroup.alpha = 0f;
+            if (panelRect   != null) panelRect.localScale = Vector3.zero;
+
+            _animTween = DOTween.Sequence()
+                .SetUpdate(true)
+                .Join(canvasGroup.DOFade(1f, popDuration))
+                .Join(panelRect.DOScale(Vector3.one, popDuration).SetEase(Ease.OutBack));
         }
 
         public void Hide(bool instant = false)
         {
-            if (_animRoutine != null) { StopCoroutine(_animRoutine); _animRoutine = null; }
+            _animTween?.Kill();
 
             if (instant || !gameObject.activeInHierarchy)
             {
@@ -70,7 +78,11 @@ namespace KawaiiKiller.UI.Shop
                 return;
             }
 
-            _animRoutine = StartCoroutine(PopOut());
+            _animTween = DOTween.Sequence()
+                .SetUpdate(true)
+                .Join(canvasGroup.DOFade(0f, popDuration * 0.6f))
+                .Join(panelRect.DOScale(Vector3.zero, popDuration * 0.6f).SetEase(Ease.InBack))
+                .OnComplete(ApplyHiddenState);
         }
 
         private void OnConfirmClicked()
@@ -97,43 +109,6 @@ namespace KawaiiKiller.UI.Shop
             if (inputBlocker != null) inputBlocker.SetActive(false);
             if (canvasGroup  != null) canvasGroup.alpha = 0f;
             if (panelRect    != null) panelRect.localScale = Vector3.zero;
-        }
-
-        private IEnumerator PopIn()
-        {
-            if (canvasGroup != null) canvasGroup.alpha = 0f;
-            if (panelRect   != null) panelRect.localScale = Vector3.zero;
-
-            float elapsed  = 0f;
-            float duration = Mathf.Max(0.01f, popDuration);
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t  = Mathf.Clamp01(elapsed / duration);
-                float ease = 1f - Mathf.Pow(1f - t, 3f);
-                if (panelRect   != null) panelRect.localScale = Vector3.one * ease;
-                if (canvasGroup != null) canvasGroup.alpha    = ease;
-                yield return null;
-            }
-            if (panelRect   != null) panelRect.localScale = Vector3.one;
-            if (canvasGroup != null) canvasGroup.alpha    = 1f;
-            _animRoutine = null;
-        }
-
-        private IEnumerator PopOut()
-        {
-            float elapsed  = 0f;
-            float duration = Mathf.Max(0.01f, popDuration * 0.6f);
-            while (elapsed < duration)
-            {
-                elapsed += Time.unscaledDeltaTime;
-                float t  = Mathf.Clamp01(elapsed / duration);
-                if (panelRect   != null) panelRect.localScale = Vector3.one * (1f - t);
-                if (canvasGroup != null) canvasGroup.alpha    = 1f - t;
-                yield return null;
-            }
-            ApplyHiddenState();
-            _animRoutine = null;
         }
     }
 }

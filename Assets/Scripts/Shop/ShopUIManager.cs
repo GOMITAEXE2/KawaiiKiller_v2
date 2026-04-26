@@ -75,6 +75,11 @@ namespace KawaiiKiller.UI.Shop
         [Header("Feedback")]
         [SerializeField] private TMP_Text feedbackText;
 
+        [Header("Economy UI")]
+        [SerializeField] private TMP_Text playerMoneyText;
+        [SerializeField] private TMP_Text moneyChangePrefab; 
+        [SerializeField] private RectTransform moneyAnimationParent;
+
         [Header("Reroll")]
         [SerializeField] private Button   rerollButton;
         [SerializeField] private TMP_Text rerollCostText;
@@ -152,6 +157,12 @@ namespace KawaiiKiller.UI.Shop
                 playerWeaponController.OnLoadoutChanged            += RefreshInventory;
                 playerWeaponController.OnCurrentWeaponIndexChanged += HandleWeaponChanged;
             }
+
+            if (playerEconomy != null)
+            {
+                playerEconomy.OnMoneyChanged += HandleMoneyChanged;
+                UpdateMoneyDisplay(playerEconomy.CurrentMoney);
+            }
         }
 
         private void Start()
@@ -172,6 +183,11 @@ namespace KawaiiKiller.UI.Shop
             {
                 playerWeaponController.OnLoadoutChanged            -= RefreshInventory;
                 playerWeaponController.OnCurrentWeaponIndexChanged -= HandleWeaponChanged;
+            }
+
+            if (playerEconomy != null)
+            {
+                playerEconomy.OnMoneyChanged -= HandleMoneyChanged;
             }
         }
 
@@ -842,6 +858,40 @@ namespace KawaiiKiller.UI.Shop
         }
 
         // ── Drop handling ─────────────────────────────────────────────────────────
+        private void HandleMoneyChanged(int total, int change)
+        {
+            UpdateMoneyDisplay(total);
+            if (change != 0 && IsOpen)
+            {
+                ShowMoneyChangeAnimation(change);
+            }
+        }
+
+        private void UpdateMoneyDisplay(int amount)
+        {
+            if (playerMoneyText != null) playerMoneyText.text = amount.ToString() + " G";
+        }
+
+        private void ShowMoneyChangeAnimation(int amount)
+        {
+            if (moneyChangePrefab == null || moneyAnimationParent == null) return;
+
+            TMP_Text animText = Instantiate(moneyChangePrefab, moneyAnimationParent);
+            animText.gameObject.SetActive(true);
+            
+            bool positive = amount > 0;
+            animText.text = (positive ? "+" : "") + amount.ToString();
+            animText.color = positive ? Color.green : Color.red;
+
+            RectTransform rt = animText.rectTransform;
+            rt.anchoredPosition = Vector2.zero;
+
+            Sequence seq = DOTween.Sequence().SetUpdate(true);
+            seq.Join(rt.DOAnchorPosY(100f, 1.2f).SetEase(Ease.OutCubic));
+            seq.Join(animText.DOFade(0f, 1.2f).SetEase(Ease.InQuint));
+            seq.OnComplete(() => Destroy(animText.gameObject));
+        }
+
         private bool TryProcessWeaponDrop(ItemCardUI card, CardContext context, ShopDropZoneUI zone)
         {
             if (playerWeaponController == null || playerEconomy == null) return false;
