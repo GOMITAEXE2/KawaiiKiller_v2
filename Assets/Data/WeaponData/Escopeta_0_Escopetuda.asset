@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ID: Escopeta_0
   Nombre: Escopetuda
+  Precio: 100
+  Rareza: 0
   Prefab3D: {fileID: 1403495534730403744, guid: b986ebdbf92b6164eb00c2f87471e705,
     type: 3}
   ProjectilePrefab: {fileID: 8714075147965725877, guid: 9b4a092f4421404468c75e33e53de105,
@@ -21,7 +23,7 @@ MonoBehaviour:
   Icono: {fileID: 21300000, guid: 8cfd09d22272a5e4b99106acd410ff5d, type: 3}
   WeaponStats:
     BaseDamage: 50
-    FireRate: 1
+    FireRate: 0.5
     CriticalChance: 40
     ProjectilesPerShot: 6
     IsAutomatic: 1
@@ -29,7 +31,23 @@ MonoBehaviour:
     AimingSpreadAngle: 1
     MagazineSize: 8
     ReloadTime: 3
+    ProjectileSpeed: 0
   Tipos: 04000000
   MaxUpgrades: 7
   MaxAttachments: 5
   StartingModifiers: []
+  ImpactEffectPrefab: {fileID: 0}
+  ProjectileColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  MuzzleFlashPrefab: {fileID: 0}
+  SmokeEffectPrefab: {fileID: 0}
+  FireSound: {fileID: 0}
+  FireSoundVolume: 0.8
+  ReloadSound: {fileID: 0}
+  ReloadSoundVolume: 0.6
+  RecoilPitchMin: 1.5
+  RecoilPitchMax: 3
+  RecoilKickStrength: 0.08
+  AdsRecoilMultiplier: 0.25
+  KickPositionOffset: {x: 0, y: 0.02, z: -0.08}
+  KickRotationOffset: {x: -8, y: 0, z: 0}
+  KickReturnSpeed: 10
